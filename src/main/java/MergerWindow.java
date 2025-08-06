@@ -27,20 +27,17 @@ public class MergerWindow {
         mergerFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mergerFrame.add(mergerPanel, BorderLayout.CENTER);
 
-        // Slide count label
         slideCountLabel = new JLabel("Number of slides: 0");
         constraints.gridx = 0;
         constraints.gridy = 0;
         constraints.gridwidth = 1;
         mergerPanel.add(slideCountLabel, constraints);
 
-        // Total presentations label
         totalPresentationLabel = new JLabel("Total Presentations: 0");
         constraints.gridx = 1;
         constraints.gridy = 0;
         mergerPanel.add(totalPresentationLabel, constraints);
 
-        // Explanation Label
         JLabel explanationLabel = new JLabel("<html><h2>Welcome to the Slide Merger!</h2>" +
                 "<p>Drag and drop your PowerPoint or PDF files here to merge them into a single presentation.</p></html>");
         constraints.gridx = 0;
@@ -48,7 +45,6 @@ public class MergerWindow {
         constraints.gridwidth = 2;
         mergerPanel.add(explanationLabel, constraints);
 
-        // Drag and Drop Box
         JPanel dragDropBox = new JPanel();
         dragDropBox.setPreferredSize(new Dimension(750, 300));
         dragDropBox.setBorder(BorderFactory.createTitledBorder("Drag & Drop Files Here"));
@@ -67,7 +63,6 @@ public class MergerWindow {
                     for (File file : droppedFiles) {
                         slideMerger.addFile(file);
                     }
-                    updateCounts();
                     return true;
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -79,16 +74,15 @@ public class MergerWindow {
         constraints.gridy = 2;
         mergerPanel.add(dragDropBox, constraints);
 
-        // Merge Button
         JButton actionButton = new JButton("Merge Slides");
         actionButton.addActionListener(e -> {
             try {
-                slideMerger.mergeSlides("MergedOutput");
-                updateCounts();
-                JOptionPane.showMessageDialog(mergerFrame, "Slides merged and saved in the current directory.");
+                File output = new File("merged_output.pdf");
+                slideMerger.mergeAllToSinglePdf(output);
+                JOptionPane.showMessageDialog(null, "Merged to: " + output.getAbsolutePath());
             } catch (IOException ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(mergerFrame, "Merging failed: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Failed to merge files");
             }
         });
 
@@ -97,11 +91,4 @@ public class MergerWindow {
 
         mergerFrame.setVisible(true);
     }
-
-    private void updateCounts() {
-        slideCountLabel.setText("Number of slides: " + slideMerger.getTotalSlides());
-        totalPresentationLabel.setText("Total Presentations: " + slideMerger.getTotalPresentations());
-    }
-
-
 }
