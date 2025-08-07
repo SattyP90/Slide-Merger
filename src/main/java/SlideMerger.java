@@ -1,5 +1,6 @@
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
+<<<<<<< Updated upstream
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
@@ -7,10 +8,16 @@ import org.apache.poi.xslf.usermodel.XMLSlideShow;
 
 import java.io.*;
 import java.util.ArrayList;
+=======
+
+import java.io.*;
+import java.util.*;
+>>>>>>> Stashed changes
 import java.util.List;
 
 public class SlideMerger {
 
+<<<<<<< Updated upstream
     private final List<File> files = new ArrayList<>();
 
     public void addFile(File file) throws IOException {
@@ -96,5 +103,78 @@ public class SlideMerger {
         }
 
         merger.mergeDocuments(null);
+=======
+    private final List<File> originalFiles = new ArrayList<>();
+    private final List<File> convertedPDFs = new ArrayList<>();
+
+    public void addFile(File file) {
+        if (file.getName().toLowerCase().endsWith(".pdf") || file.getName().toLowerCase().endsWith(".pptx")) {
+            originalFiles.add(file);
+        }
+    }
+
+    public void mergeSlides(String outputBaseName) throws IOException {
+        convertedPDFs.clear(); // reset before merging
+
+        for (File file : originalFiles) {
+            if (file.getName().toLowerCase().endsWith(".pdf")) {
+                convertedPDFs.add(file);
+            } else if (file.getName().toLowerCase().endsWith(".pptx")) {
+                File converted = convertPPTXtoPDF(file);
+                if (converted != null) {
+                    convertedPDFs.add(converted);
+                }
+            }
+        }
+
+        PDFMergerUtility merger = new PDFMergerUtility();
+        for (File pdf : convertedPDFs) {
+            merger.addSource(pdf);
+        }
+
+        File mergedFile = new File(outputBaseName + ".pdf");
+        merger.setDestinationFileName(mergedFile.getAbsolutePath());
+        merger.mergeDocuments(null);
+    }
+
+    private File convertPPTXtoPDF(File pptxFile) {
+        try {
+            String outputDir = System.getProperty("java.io.tmpdir");
+            ProcessBuilder pb = new ProcessBuilder(
+                    "libreoffice",
+                    "--headless",
+                    "--convert-to", "pdf",
+                    "--outdir", outputDir,
+                    pptxFile.getAbsolutePath()
+            );
+
+            Process process = pb.start();
+            process.waitFor();
+
+            String pdfName = pptxFile.getName().replace(".pptx", ".pdf");
+            File outputFile = new File(outputDir, pdfName);
+            return outputFile.exists() ? outputFile : null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public int getTotalPresentations() {
+        return originalFiles.size();
+    }
+
+    public int getTotalSlides() {
+        int totalSlides = 0;
+        for (File pdf : convertedPDFs) {
+            try (PDDocument doc = PDDocument.load(pdf)) {
+                totalSlides += doc.getNumberOfPages();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return totalSlides;
+>>>>>>> Stashed changes
     }
 }

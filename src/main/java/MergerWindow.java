@@ -76,6 +76,7 @@ public class MergerWindow {
 
         JButton actionButton = new JButton("Merge Slides");
         actionButton.addActionListener(e -> {
+<<<<<<< Updated upstream
             try {
                 File output = new File("merged_output.pdf");
                 slideMerger.mergeAllToSinglePdf(output);
@@ -84,6 +85,11 @@ public class MergerWindow {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Failed to merge files");
             }
+=======
+            //slideMerger.mergeSlides("MergedOutput");
+            updateCounts();
+            JOptionPane.showMessageDialog(mergerFrame, "Slides merged and saved in the current directory.");
+>>>>>>> Stashed changes
         });
 
         constraints.gridy = 3;
@@ -91,4 +97,13 @@ public class MergerWindow {
 
         mergerFrame.setVisible(true);
     }
+<<<<<<< Updated upstream
+=======
+
+    private void updateCounts() {
+        slideCountLabel.setText("Number of slides: " + slideMerger.getTotalSlides());
+        totalPresentationLabel.setText("Total Presentations: " + slideMerger.getTotalPresentations());
+    }
+
+>>>>>>> Stashed changes
 }
