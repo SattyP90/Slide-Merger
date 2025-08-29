@@ -1,6 +1,0 @@
-
-
-- drag and drop box
-- total slide count
-- total number of presentations
-- download as pdf button
